@@ -127,6 +127,31 @@ Hand-computed worked examples, each with full shown arithmetic as ground truth, 
 
 **Standing rule:** no change to any file under `core/` ships unless every golden case still passes. This is enforced by running the full `tests/golden_cases/` suite as part of any change to calculation logic — not optional, not a "should probably run this."
 
+## Field-level input guidance (surfaced inline in the UI, not just here)
+
+Every data-entry field must show, right next to it, what it is and which document it comes from — not just a bare label. This is a UI requirement, not only documentation: each field in `app/templates/` gets a visible hint, not a tooltip that has to be discovered.
+
+| Field | What it is | Where to find it |
+|---|---|---|
+| Gross Salary | Total salary income for the FY | Form 16 Part B, "Details of Salary Paid" section |
+| RSU Perquisite Value (employer-reported) | The RSU vesting value your employer already taxed as salary | Form 16 Part B, under "Value of perquisites u/s 17(2)" — may be a separate line if your employer breaks it out |
+| TDS (Tax Deducted at Source) | Tax your employer withheld from salary | Form 16 Part A, "Total tax deducted" summary, or Part B "Total Tax Payable" |
+| Form 26AS TDS/TCS entries | Tax-credit records matching Form 16 | Form 26AS, Part A (TDS on Salary) and Part A2/B as applicable — deductor name, section, amount, date per entry |
+| Vest date | Date RSUs vested/released | Schwab "Release Confirmation" or Fidelity Stock Plan release statement — "Vest Date" / "Release Date" |
+| Shares vested (gross) | Total shares released at vesting, before tax withholding | Same statement — "Shares Released" / "Gross Shares" |
+| FMV per share at vest (USD) | Fair market value used to compute your taxable perquisite | Same statement — "Fair Market Value" / "FMV per Share" |
+| Shares withheld for tax | Shares your employer sold to cover withholding | Same statement — "Shares Withheld for Taxes" / "Shares Sold to Cover Taxes" |
+| Sale date | Date shares were sold | Schwab "Realized Gain/Loss" report or trade confirmation — "Trade Date" / "Date Sold" |
+| Quantity sold | Number of shares sold in this transaction | Same report — "Quantity" |
+| Sale price per share (USD) | Price received per share | Same report — "Sale Price" / "Price per Share" |
+| Dividend payment date | Date dividend was paid | 1042-S or 1099-DIV, or brokerage dividend statement — "Payment Date" |
+| Gross dividend (USD) | Dividend amount before withholding | 1042-S Box 2 ("Gross Income") or 1099-DIV Box 1a |
+| US tax withheld on dividend (USD) | Tax the US withheld at source | 1042-S Box 7a ("Federal tax withheld") or 1099-DIV Box 4 |
+| FX rate (INR per USD) per date | The conversion rate to apply for that transaction date | Sourced by you/your CA — typically SBI's published TT rate for that date. The app does not fetch or verify this; you supply one rate per date in the CSV |
+| Schedule FA calendar-year selection | Which Jan–Dec window applies to Schedule FA for this AY | This is a filing-method decision, not something read off a document — confirm with your CA, since it's the kind of rule this app deliberately does not assume (see Governing Principle) |
+
+If a field's guidance can't be written this concretely during implementation (i.e., it's genuinely ambiguous which document/box applies), that's a signal to make it a user-confirmed decision point per the Governing Principle, not to write vague guidance and move on.
+
 ## Testing strategy beyond the golden cases
 
 - `test_no_network.py` — static source scan, fails the build if `core/` or `app/` imports any networking-capable module.
