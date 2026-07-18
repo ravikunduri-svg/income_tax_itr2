@@ -49,3 +49,20 @@ def form16_entry(ay_label: str):
         return redirect(url_for("year_detail", ay_label=ay_label))
     form16 = db.get_form16_summary(ay_id)
     return render_template("form16_entry.html", ay_label=ay_label, form16=form16)
+
+
+@app.route("/year/<ay_label>/vesting", methods=["GET", "POST"])
+def vesting_entry(ay_label: str):
+    db = get_db()
+    ay_id = db.create_or_get_assessment_year(ay_label, date.today(), date.today())
+    if request.method == "POST":
+        db.save_vesting_event(
+            ay_id,
+            vest_date=date.fromisoformat(request.form["vest_date"]),
+            shares_vested_gross=float(request.form["shares_vested_gross"]),
+            fmv_per_share_usd=float(request.form["fmv_per_share_usd"]),
+            shares_withheld_for_tax=float(request.form["shares_withheld_for_tax"]),
+        )
+        return redirect(url_for("vesting_entry", ay_label=ay_label))
+    vesting_events = db.list_vesting_events(ay_id)
+    return render_template("vesting_entry.html", ay_label=ay_label, vesting_events=vesting_events)
