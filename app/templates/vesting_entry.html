@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>RSU Vesting Events — {{ ay_label }}</h1>
+  <form method="post">
+    <label for="vest_date">Vest date</label>
+    <input type="date" id="vest_date" name="vest_date" required>
+    <div class="field-help">Schwab "Release Confirmation" or Fidelity Stock Plan release statement — "Vest Date" / "Release Date".</div>
+
+    <label for="shares_vested_gross">Shares vested (gross)</label>
+    <input type="number" step="0.0001" id="shares_vested_gross" name="shares_vested_gross" required>
+    <div class="field-help">Same statement — "Shares Released" / "Gross Shares".</div>
+
+    <label for="fmv_per_share_usd">FMV per share at vest (USD)</label>
+    <input type="number" step="0.0001" id="fmv_per_share_usd" name="fmv_per_share_usd" required>
+    <div class="field-help">Same statement — "Fair Market Value" / "FMV per Share".</div>
+
+    <label for="shares_withheld_for_tax">Shares withheld for tax</label>
+    <input type="number" step="0.0001" id="shares_withheld_for_tax" name="shares_withheld_for_tax" required>
+    <div class="field-help">Same statement — "Shares Withheld for Taxes" / "Shares Sold to Cover Taxes".</div>
+
+    <button type="submit" style="margin-top: 1rem;">Add Vesting Event</button>
+  </form>
+
+  <table>
+    <tr><th>Vest Date</th><th>Shares Vested</th><th>FMV/Share (USD)</th><th>Shares Withheld</th></tr>
+    {% for v in vesting_events %}
+    <tr>
+      <td>{{ v.vest_date }}</td>
+      <td>{{ v.shares_vested_gross }}</td>
+      <td>{{ v.fmv_per_share_usd }}</td>
+      <td>{{ v.shares_withheld_for_tax }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

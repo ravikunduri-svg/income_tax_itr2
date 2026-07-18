@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Results — {{ ay_label }}</h1>
+
+  {% if error %}
+    <div class="warning"><strong>Cannot compute:</strong> {{ error }}</div>
+  {% else %}
+    {% if report.perquisite_mismatch %}
+      <div class="warning">
+        <strong>Form 16 / vesting mismatch:</strong>
+        Form 16 reports ₹{{ report.perquisite_mismatch.form16_value_inr }},
+        vesting records sum to ₹{{ report.perquisite_mismatch.vesting_sum_inr }}
+        (difference ₹{{ report.perquisite_mismatch.difference_inr }}).
+        Review both figures before filing — neither is assumed correct.
+      </div>
+    {% endif %}
+
+    <h2>Schedule Capital Gains</h2>
+    <table>
+      <tr><th>Lot</th><th>Qty</th><th>Cost Basis (INR)</th><th>Proceeds (INR)</th><th>Gain (INR)</th><th>Classification</th></tr>
+      {% for lot in report.lot_gains %}
+      <tr>
+        <td>Vest #{{ lot.vesting_event_id }}</td>
+        <td>{{ lot.quantity }}</td>
+        <td>{{ lot.cost_basis_inr }}</td>
+        <td>{{ lot.proceeds_inr }}</td>
+        <td>{{ lot.gain_inr }}</td>
+        <td>
+          {{ "Long-term" if lot.is_long_term else "Short-term" }}
+          {% if lot.near_boundary %}<strong> — within 5 days of the 24-month boundary, double-check this date</strong>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Schedule TR/FSI — Foreign Tax Credit</h2>
+    <p>Total US tax withheld on dividends: ${{ report.ftc.total_us_tax_withheld_usd }}</p>
+    <p><strong>{{ report.ftc.form_67_deadline_note }}</strong></p>
+
+    <h2>Schedule FA</h2>
+    <p>Calendar year: {{ report.schedule_fa.calendar_year }}</p>
+    <p>Peak value: ₹{{ report.schedule_fa.peak_value_inr }}</p>
+    <p>Closing value (Dec 31): ₹{{ report.schedule_fa.closing_value_inr }}</p>
+
+    <h2>Schedule Salary</h2>
+    <p>Gross salary: ₹{{ report.form16.gross_salary_inr }}</p>
+    <p>RSU perquisite (as reported by employer): ₹{{ report.form16.rsu_perquisite_value_inr }}</p>
+    <p>TDS: ₹{{ report.form16.tds_inr }}</p>
+  {% endif %}
+{% endblock %}
