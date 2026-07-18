@@ -2,6 +2,7 @@ from datetime import date
 
 from flask import Flask, redirect, render_template, request, url_for
 
+from core.models import Form16Summary
 from db.access import Database
 
 app = Flask(__name__)
@@ -32,3 +33,19 @@ def index():
 @app.route("/year/<ay_label>")
 def year_detail(ay_label: str):
     return render_template("year_select.html", ay_label=ay_label) if False else f"Assessment Year: {ay_label}"
+
+
+@app.route("/year/<ay_label>/form16", methods=["GET", "POST"])
+def form16_entry(ay_label: str):
+    db = get_db()
+    ay_id = db.create_or_get_assessment_year(ay_label, date.today(), date.today())
+    if request.method == "POST":
+        db.save_form16_summary(
+            ay_id,
+            gross_salary_inr=float(request.form["gross_salary_inr"]),
+            rsu_perquisite_value_inr=float(request.form["rsu_perquisite_value_inr"]),
+            tds_inr=float(request.form["tds_inr"]),
+        )
+        return redirect(url_for("year_detail", ay_label=ay_label))
+    form16 = db.get_form16_summary(ay_id)
+    return render_template("form16_entry.html", ay_label=ay_label, form16=form16)
