@@ -1,0 +1,7 @@
+Charles Schwab
+Account Activity
+
+Date        Action     Symbol   Qty      Price         Amount
+04/10/2024  RS         AVGO     50       1285.75       64287.50
+04/10/2024  Tax Wh     AVGO     15       1285.75       19286.25
+05/20/2024  Sell       AVGO     35       1350.00       47250.00

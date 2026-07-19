@@ -29,7 +29,7 @@ def test_sale_page_lists_available_lots(client_and_path):
     client, _ = client_and_path
     resp = client.get("/year/2024-25/sales")
     assert resp.status_code == 200
-    assert b"Realized Gain/Loss" in resp.data
+    assert b"Lot allocation" in resp.data
     assert b"2022-06-01" in resp.data  # available lot shown for allocation
 
 

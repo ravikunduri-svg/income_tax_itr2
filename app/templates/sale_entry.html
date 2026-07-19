@@ -1,35 +1,63 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>Sale Events — {{ ay_label }}</h1>
+
+  <div class="upload-section">
+    <h3>Bulk import from Transaction History PDF</h3>
+    <p class="field-help">Sale events are imported without lot allocations — assign lots manually after import.</p>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('sales_upload_bulk', ay_label=ay_label) }}">
+      <input type="file" name="pdf" accept=".pdf" required>
+      <button type="submit">Parse Transaction History</button>
+    </form>
+  </div>
+
+  {% if sales_bulk %}
+  <div class="bulk-review">
+    <h3>Review extracted sale events — uncheck any to skip</h3>
+    <form method="post">
+      <input type="hidden" name="action" value="save_bulk">
+      <table>
+        <tr><th>Save?</th><th>Sale Date</th><th>Shares Sold</th><th>Price/Share (USD)</th><th>Confidence</th></tr>
+        {% for i, ev in sales_bulk | enumerate %}
+        <tr>
+          <td><input type="checkbox" name="selected_rows" value="{{ i }}" checked></td>
+          <td>{{ ev.sale_date }}</td>
+          <td>{{ ev.shares_sold }}</td>
+          <td>{{ ev.price_per_share_usd }}</td>
+          <td><span class="badge badge-{{ ev.confidence }}"></span> {{ ev.confidence }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <button type="submit" style="margin-top:0.5rem;">Save selected (no lot allocation)</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <hr>
+  <h3>Add sale event manually</h3>
   <form method="post">
+    <input type="hidden" name="action" value="add_single">
     <label for="sale_date">Sale date</label>
     <input type="date" id="sale_date" name="sale_date" required>
-    <div class="field-help">Schwab "Realized Gain/Loss" report or trade confirmation — "Trade Date" / "Date Sold".</div>
 
     <label for="quantity_sold">Quantity sold</label>
     <input type="number" step="0.0001" id="quantity_sold" name="quantity_sold" required>
-    <div class="field-help">Same report — "Quantity".</div>
 
     <label for="sale_price_per_share_usd">Sale price per share (USD)</label>
     <input type="number" step="0.0001" id="sale_price_per_share_usd" name="sale_price_per_share_usd" required>
-    <div class="field-help">Same report — "Sale Price" / "Price per Share".</div>
 
-    <h3>Which vesting lot(s) did these shares come from?</h3>
-    <div class="field-help">
-      Enter the exact quantity drawn from each lot below. The total must equal
-      "Quantity sold" above — this app never assumes FIFO or any other
-      automatic matching.
-    </div>
+    <h4>Lot allocation (which vesting lots do these shares come from?)</h4>
+    <div class="field-help">Enter the number of shares from each vesting lot. Total must equal quantity sold.</div>
     {% for v in vesting_events %}
-      <label for="lot_qty_{{ v.id }}">Vested {{ v.vest_date }} — {{ v.shares_vested_gross }} shares @ ${{ v.fmv_per_share_usd }}</label>
-      <input type="number" step="0.0001" id="lot_qty_{{ v.id }}" name="lot_qty_{{ v.id }}" value="0">
+    <label>Vest {{ v.vest_date }} — {{ v.shares_vested_gross }} shares @ ${{ v.fmv_per_share_usd }}</label>
+    <input type="number" step="0.0001" name="lot_qty_{{ v.id }}" value="0" min="0">
     {% endfor %}
 
-    <button type="submit" style="margin-top: 1rem;">Add Sale</button>
+    <button type="submit" style="margin-top: 1rem;">Add Sale Event</button>
   </form>
 
   <table>
-    <tr><th>Sale Date</th><th>Quantity</th><th>Sale Price/Share (USD)</th></tr>
+    <tr><th>Sale Date</th><th>Qty Sold</th><th>Price/Share (USD)</th></tr>
     {% for s in sale_events %}
     <tr>
       <td>{{ s.sale_date }}</td>

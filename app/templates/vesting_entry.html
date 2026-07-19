@@ -1,21 +1,76 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>RSU Vesting Events — {{ ay_label }}</h1>
-  <form method="post">
-    <label for="vest_date">Vest date</label>
-    <input type="date" id="vest_date" name="vest_date" required>
-    <div class="field-help">Schwab "Release Confirmation" or Fidelity Stock Plan release statement — "Vest Date" / "Release Date".</div>
 
-    <label for="shares_vested_gross">Shares vested (gross)</label>
-    <input type="number" step="0.0001" id="shares_vested_gross" name="shares_vested_gross" required>
+  <div class="upload-section">
+    <h3>Auto-fill from Release Confirmation PDF</h3>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('vesting_upload', ay_label=ay_label) }}">
+      <input type="file" name="pdf" accept=".pdf" required>
+      <button type="submit">Parse Release Confirmation</button>
+    </form>
+  </div>
+
+  <div class="upload-section">
+    <h3>Bulk import from Transaction History PDF</h3>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('vesting_upload_bulk', ay_label=ay_label) }}">
+      <input type="file" name="pdf" accept=".pdf" required>
+      <button type="submit">Parse Transaction History</button>
+    </form>
+  </div>
+
+  {% if vesting_bulk %}
+  <div class="bulk-review">
+    <h3>Review extracted vesting events — uncheck any to skip</h3>
+    <form method="post">
+      <input type="hidden" name="action" value="save_bulk">
+      <table>
+        <tr><th>Save?</th><th>Vest Date</th><th>Shares Vested</th><th>FMV/Share (USD)</th><th>Shares Withheld</th><th>Confidence</th></tr>
+        {% for i, ev in vesting_bulk | enumerate %}
+        <tr>
+          <td><input type="checkbox" name="selected_rows" value="{{ i }}" checked></td>
+          <td>{{ ev.vest_date }}</td>
+          <td>{{ ev.shares_vested_gross }}</td>
+          <td>{{ ev.fmv_per_share_usd }}</td>
+          <td>{{ ev.shares_withheld_for_tax }}</td>
+          <td><span class="badge badge-{{ ev.confidence }}"></span> {{ ev.confidence }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <button type="submit" style="margin-top:0.5rem;">Save selected</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <hr>
+  <h3>Add vesting event manually</h3>
+  <form method="post">
+    <input type="hidden" name="action" value="add_single">
+    <label for="vest_date">Vest date
+      {% if vesting_prefill %}<span class="badge badge-{{ vesting_prefill.vest_date.confidence }}" title="{{ vesting_prefill.vest_date.hint }}"></span>{% endif %}
+    </label>
+    <input type="date" id="vest_date" name="vest_date"
+           value="{{ vesting_prefill.vest_date.value if vesting_prefill and vesting_prefill.vest_date.value is not none else '' }}" required>
+    <div class="field-help">Schwab "Release Confirmation" or Fidelity release statement — "Vest Date" / "Release Date".</div>
+
+    <label for="shares_vested_gross">Shares vested (gross)
+      {% if vesting_prefill %}<span class="badge badge-{{ vesting_prefill.shares_vested_gross.confidence }}" title="{{ vesting_prefill.shares_vested_gross.hint }}"></span>{% endif %}
+    </label>
+    <input type="number" step="0.0001" id="shares_vested_gross" name="shares_vested_gross"
+           value="{{ vesting_prefill.shares_vested_gross.value if vesting_prefill and vesting_prefill.shares_vested_gross.value is not none else '' }}" required>
     <div class="field-help">Same statement — "Shares Released" / "Gross Shares".</div>
 
-    <label for="fmv_per_share_usd">FMV per share at vest (USD)</label>
-    <input type="number" step="0.0001" id="fmv_per_share_usd" name="fmv_per_share_usd" required>
+    <label for="fmv_per_share_usd">FMV per share at vest (USD)
+      {% if vesting_prefill %}<span class="badge badge-{{ vesting_prefill.fmv_per_share_usd.confidence }}" title="{{ vesting_prefill.fmv_per_share_usd.hint }}"></span>{% endif %}
+    </label>
+    <input type="number" step="0.0001" id="fmv_per_share_usd" name="fmv_per_share_usd"
+           value="{{ vesting_prefill.fmv_per_share_usd.value if vesting_prefill and vesting_prefill.fmv_per_share_usd.value is not none else '' }}" required>
     <div class="field-help">Same statement — "Fair Market Value" / "FMV per Share".</div>
 
-    <label for="shares_withheld_for_tax">Shares withheld for tax</label>
-    <input type="number" step="0.0001" id="shares_withheld_for_tax" name="shares_withheld_for_tax" required>
+    <label for="shares_withheld_for_tax">Shares withheld for tax
+      {% if vesting_prefill %}<span class="badge badge-{{ vesting_prefill.shares_withheld_for_tax.confidence }}" title="{{ vesting_prefill.shares_withheld_for_tax.hint }}"></span>{% endif %}
+    </label>
+    <input type="number" step="0.0001" id="shares_withheld_for_tax" name="shares_withheld_for_tax"
+           value="{{ vesting_prefill.shares_withheld_for_tax.value if vesting_prefill and vesting_prefill.shares_withheld_for_tax.value is not none else '' }}" required>
     <div class="field-help">Same statement — "Shares Withheld for Taxes" / "Shares Sold to Cover Taxes".</div>
 
     <button type="submit" style="margin-top: 1rem;">Add Vesting Event</button>

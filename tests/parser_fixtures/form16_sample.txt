@@ -1,0 +1,22 @@
+FORM NO. 16
+Certificate under section 203 of the Income-tax Act, 1961
+for tax deducted at source on salary
+
+Name and address of the Employer: BROADCOM INDIA PRIVATE LIMITED
+Name and designation of the Employee: TEST EMPLOYEE
+Assessment Year: 2024-25
+
+PART A
+
+SUMMARY OF TAX DEDUCTED AT SOURCE
+Total amount of tax deducted and deposited: 350000.00
+
+PART B (Annexure)
+Details of Salary Paid and any other income and tax deducted
+
+1. Gross Salary
+   (a) Salary as per provisions contained in sec.17(1): 3500000.00
+   (b) Value of perquisites u/s 17(2) (as per Form No. 12BA, wherever applicable): 392500.00
+   (c) Profits in lieu of salary under section 17(3): 0.00
+
+Total: 3892500.00

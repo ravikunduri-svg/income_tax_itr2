@@ -1,0 +1,12 @@
+Fidelity Investments
+RSU Release Confirmation
+
+Release Date: 10/15/2023
+Plan: Restricted Stock Unit Award
+
+Shares Released: 100
+Shares Sold for Tax: 30
+Net Shares Deposited: 70
+
+Fair Market Value per Share: $785.50
+Total Value: $78,550.00
