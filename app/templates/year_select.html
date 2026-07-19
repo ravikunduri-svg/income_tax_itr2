@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>ITR-2 RSU Assistant</h1>
+  <h2>Assessment Year</h2>
+  <form method="post">
+    <label for="ay_label">Assessment Year (e.g. 2024-25)</label>
+    <input type="text" id="ay_label" name="ay_label" required>
+    <div class="field-help">The Indian assessment year label you're filing for.</div>
+
+    <label for="fy_start_date">Financial Year start date</label>
+    <input type="date" id="fy_start_date" name="fy_start_date" required>
+
+    <label for="fy_end_date">Financial Year end date</label>
+    <input type="date" id="fy_end_date" name="fy_end_date" required>
+
+    <button type="submit" style="margin-top: 1rem;">Create / Open</button>
+  </form>
+{% endblock %}

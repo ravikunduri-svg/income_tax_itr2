@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Exchange Rates — {{ ay_label }}</h1>
+  <div class="field-help">
+    Upload a CSV with columns "date" (YYYY-MM-DD) and "rate" (INR per USD).
+    Source this yourself or with your CA — typically SBI's published TT rate
+    for each transaction date. This app does not fetch or verify rates; it
+    only stores what you provide and hard-stops if a date you need is missing.
+  </div>
+  <form method="post" enctype="multipart/form-data">
+    <label for="fx_csv">FX rate CSV</label>
+    <input type="file" id="fx_csv" name="fx_csv" accept=".csv" required>
+    <button type="submit" style="margin-top: 1rem;">Upload</button>
+  </form>
+
+  <table>
+    <tr><th>Date</th><th>Rate (INR/USD)</th></tr>
+    {% for d, r in rates.items() %}
+    <tr><td>{{ d }}</td><td>{{ r }}</td></tr>
+    {% endfor %}
+  </table>
+{% endblock %}

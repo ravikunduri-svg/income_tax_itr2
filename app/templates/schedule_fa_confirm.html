@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Schedule FA — {{ ay_label }}</h1>
+  <div class="field-help">
+    Which Jan 1–Dec 31 calendar year applies to Schedule FA for this
+    assessment year is a filing-method decision, not something read off a
+    document — confirm with your CA. This app will not infer it for you.
+  </div>
+  <form method="post">
+    <label for="calendar_year">Calendar year to use for Schedule FA</label>
+    <input type="number" id="calendar_year" name="calendar_year" value="{{ calendar_year or '' }}" required>
+
+    <h3>Add an account value on a specific date</h3>
+    <div class="field-help">Enter values from your monthly/year-end brokerage statements across the full calendar year — you need at minimum a Dec 31 value to compute the closing figure.</div>
+    <label for="value_date">Date</label>
+    <input type="date" id="value_date" name="value_date" required>
+    <label for="account_value_inr">Account value (INR)</label>
+    <input type="number" step="0.01" id="account_value_inr" name="account_value_inr" required>
+
+    <button type="submit" style="margin-top: 1rem;">Save</button>
+  </form>
+
+  <table>
+    <tr><th>Date</th><th>Account Value (INR)</th></tr>
+    {% for d, v in monthly_values.items() %}
+    <tr><td>{{ d }}</td><td>{{ v }}</td></tr>
+    {% endfor %}
+  </table>
+{% endblock %}

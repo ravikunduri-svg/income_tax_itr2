@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Dividend Events — {{ ay_label }}</h1>
+  <form method="post">
+    <label for="payment_date">Dividend payment date</label>
+    <input type="date" id="payment_date" name="payment_date" required>
+    <div class="field-help">1042-S or 1099-DIV, or brokerage dividend statement — "Payment Date".</div>
+
+    <label for="gross_dividend_usd">Gross dividend (USD)</label>
+    <input type="number" step="0.0001" id="gross_dividend_usd" name="gross_dividend_usd" required>
+    <div class="field-help">1042-S Box 2 ("Gross Income") or 1099-DIV Box 1a.</div>
+
+    <label for="us_tax_withheld_usd">US tax withheld (USD)</label>
+    <input type="number" step="0.0001" id="us_tax_withheld_usd" name="us_tax_withheld_usd" required>
+    <div class="field-help">1042-S Box 7a ("Federal tax withheld") or 1099-DIV Box 4.</div>
+
+    <button type="submit" style="margin-top: 1rem;">Add Dividend</button>
+  </form>
+
+  <table>
+    <tr><th>Payment Date</th><th>Gross Dividend (USD)</th><th>US Tax Withheld (USD)</th></tr>
+    {% for d in dividend_events %}
+    <tr>
+      <td>{{ d.payment_date }}</td>
+      <td>{{ d.gross_dividend_usd }}</td>
+      <td>{{ d.us_tax_withheld_usd }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

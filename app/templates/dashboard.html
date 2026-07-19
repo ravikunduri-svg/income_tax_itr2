@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Assessment Year {{ ay_label }}</h1>
+  <nav>
+    <a href="{{ url_for('form16_entry', ay_label=ay_label) }}">Form 16 / 26AS</a>
+    <a href="{{ url_for('vesting_entry', ay_label=ay_label) }}">Vesting Events</a>
+    <a href="{{ url_for('sale_entry', ay_label=ay_label) }}">Sale Events</a>
+    <a href="{{ url_for('dividend_entry', ay_label=ay_label) }}">Dividends</a>
+    <a href="{{ url_for('fx_upload', ay_label=ay_label) }}">FX Rates</a>
+    <a href="{{ url_for('schedule_fa_confirm', ay_label=ay_label) }}">Schedule FA</a>
+    <a href="{{ url_for('results', ay_label=ay_label) }}">Results</a>
+  </nav>
+{% endblock %}
