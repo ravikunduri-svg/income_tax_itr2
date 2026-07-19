@@ -103,6 +103,11 @@ def form16_upload(ay_label: str):
             }
         else:
             flash(f"Unrecognised document type '{doc_type}'. Expected Form 16 or AIS PDF.")
+    except Exception as _e:
+        if "PasswordIncorrect" in repr(_e) or "PdfminerException" in type(_e).__name__:
+            flash("Incorrect or missing PDF password. Enter the password and try again.")
+        else:
+            flash(f"Could not read PDF: {type(_e).__name__}: {_e}")
     finally:
         os.unlink(tmp_path)
     return redirect(url_for("form16_entry", ay_label=ay_label))
@@ -173,6 +178,11 @@ def vesting_upload(ay_label: str):
             k: {"value": v.value, "confidence": v.confidence, "hint": v.source_hint}
             for k, v in result.items()
         }
+    except Exception as _e:
+        if "PasswordIncorrect" in repr(_e) or "PdfminerException" in type(_e).__name__:
+            flash("Incorrect or missing PDF password. Enter the password and try again.")
+        else:
+            flash(f"Could not read PDF: {type(_e).__name__}: {_e}")
     finally:
         os.unlink(tmp_path)
     return redirect(url_for("vesting_entry", ay_label=ay_label))
@@ -199,6 +209,11 @@ def vesting_upload_bulk(ay_label: str):
             return redirect(url_for("vesting_entry", ay_label=ay_label))
         result = parse(tmp_path, pwd)
         session["vesting_bulk_prefill"] = result["vesting_events"]
+    except Exception as _e:
+        if "PasswordIncorrect" in repr(_e) or "PdfminerException" in type(_e).__name__:
+            flash("Incorrect or missing PDF password. Enter the password and try again.")
+        else:
+            flash(f"Could not read PDF: {type(_e).__name__}: {_e}")
     finally:
         os.unlink(tmp_path)
     return redirect(url_for("vesting_entry", ay_label=ay_label))
@@ -271,6 +286,11 @@ def sales_upload_bulk(ay_label: str):
             return redirect(url_for("sale_entry", ay_label=ay_label))
         result = parse(tmp_path, pwd)
         session["sales_bulk_prefill"] = result["sale_events"]
+    except Exception as _e:
+        if "PasswordIncorrect" in repr(_e) or "PdfminerException" in type(_e).__name__:
+            flash("Incorrect or missing PDF password. Enter the password and try again.")
+        else:
+            flash(f"Could not read PDF: {type(_e).__name__}: {_e}")
     finally:
         os.unlink(tmp_path)
     return redirect(url_for("sale_entry", ay_label=ay_label))
@@ -321,6 +341,11 @@ def dividends_upload(ay_label: str):
             k: {"value": v.value, "confidence": v.confidence, "hint": v.source_hint}
             for k, v in result.items()
         }
+    except Exception as _e:
+        if "PasswordIncorrect" in repr(_e) or "PdfminerException" in type(_e).__name__:
+            flash("Incorrect or missing PDF password. Enter the password and try again.")
+        else:
+            flash(f"Could not read PDF: {type(_e).__name__}: {_e}")
     finally:
         os.unlink(tmp_path)
     return redirect(url_for("dividend_entry", ay_label=ay_label))
