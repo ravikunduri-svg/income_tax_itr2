@@ -1,0 +1,7 @@
+Fidelity Investments
+Account Activity
+
+Date        Transaction Type            Symbol   Qty      Price     Amount
+10/15/2023  RSU VEST                   AVGO     100      785.50    78550.00
+10/15/2023  TAX WITHHOLDING SELL       AVGO     30       785.50    23565.00
+11/20/2023  YOU SOLD                   AVGO     70       810.25    56717.50
