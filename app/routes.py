@@ -13,6 +13,7 @@ from db.access import Database
 
 app = Flask(__name__)
 app.secret_key = "itr2-rsu-dev-secret"
+app.jinja_env.filters["enumerate"] = enumerate
 _db_path_holder = {"path": None}
 
 

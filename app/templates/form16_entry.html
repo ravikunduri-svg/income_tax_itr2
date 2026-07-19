@@ -1,21 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>Form 16 — {{ ay_label }}</h1>
+
+  <div class="upload-section">
+    <h3>Auto-fill from PDF</h3>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('form16_upload', ay_label=ay_label) }}">
+      <label>Upload Form 16 or AIS PDF:</label>
+      <input type="file" name="pdf" accept=".pdf" required>
+      <button type="submit">Parse PDF</button>
+    </form>
+  </div>
+
+  {% if ais_prefill %}
+  <div class="upload-section" style="background:#e8f5e9;">
+    <strong>AIS cross-check — TDS:</strong>
+    {{ ais_prefill.tds_inr.value }}
+    <span class="badge badge-{{ ais_prefill.tds_inr.confidence }}" title="{{ ais_prefill.tds_inr.hint }}"></span>
+    {% if form16_prefill and form16_prefill.tds_inr.value != ais_prefill.tds_inr.value %}
+    <span style="color:#b71c1c;"> ⚠ Differs from Form 16 value ({{ form16_prefill.tds_inr.value }}). Verify before saving.</span>
+    {% endif %}
+  </div>
+  {% endif %}
+
   <form method="post">
-    <label for="gross_salary_inr">Gross Salary (INR)</label>
+    <label for="gross_salary_inr">Gross Salary (INR)
+      {% if form16_prefill %}<span class="badge badge-{{ form16_prefill.gross_salary_inr.confidence }}" title="{{ form16_prefill.gross_salary_inr.hint }}"></span>{% endif %}
+    </label>
     <input type="number" step="0.01" id="gross_salary_inr" name="gross_salary_inr"
-           value="{{ form16.gross_salary_inr if form16 else '' }}" required>
+           value="{{ form16_prefill.gross_salary_inr.value if form16_prefill and form16_prefill.gross_salary_inr.value is not none else (form16.gross_salary_inr if form16 else '') }}" required>
     <div class="field-help">Form 16 Part B, "Details of Salary Paid" section.</div>
 
-    <label for="rsu_perquisite_value_inr">RSU Perquisite Value, as reported by employer (INR)</label>
+    <label for="rsu_perquisite_value_inr">RSU Perquisite Value (INR)
+      {% if form16_prefill %}<span class="badge badge-{{ form16_prefill.rsu_perquisite_value_inr.confidence }}" title="{{ form16_prefill.rsu_perquisite_value_inr.hint }}"></span>{% endif %}
+    </label>
     <input type="number" step="0.01" id="rsu_perquisite_value_inr" name="rsu_perquisite_value_inr"
-           value="{{ form16.rsu_perquisite_value_inr if form16 else '' }}" required>
-    <div class="field-help">Form 16 Part B, under "Value of perquisites u/s 17(2)" — may be a separate line if your employer breaks it out.</div>
+           value="{{ form16_prefill.rsu_perquisite_value_inr.value if form16_prefill and form16_prefill.rsu_perquisite_value_inr.value is not none else (form16.rsu_perquisite_value_inr if form16 else '') }}" required>
+    <div class="field-help">Form 16 Part B, under "Value of perquisites u/s 17(2)".</div>
 
-    <label for="tds_inr">TDS — Tax Deducted at Source (INR)</label>
+    <label for="tds_inr">TDS — Tax Deducted at Source (INR)
+      {% if form16_prefill %}<span class="badge badge-{{ form16_prefill.tds_inr.confidence }}" title="{{ form16_prefill.tds_inr.hint }}"></span>{% endif %}
+    </label>
     <input type="number" step="0.01" id="tds_inr" name="tds_inr"
-           value="{{ form16.tds_inr if form16 else '' }}" required>
-    <div class="field-help">Form 16 Part A, "Total tax deducted" summary, or Part B "Total Tax Payable".</div>
+           value="{{ form16_prefill.tds_inr.value if form16_prefill and form16_prefill.tds_inr.value is not none else (form16.tds_inr if form16 else '') }}" required>
+    <div class="field-help">Form 16 Part A, "Total tax deducted".</div>
 
     <button type="submit" style="margin-top: 1rem;">Save</button>
   </form>
