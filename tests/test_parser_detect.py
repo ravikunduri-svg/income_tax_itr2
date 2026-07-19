@@ -64,3 +64,12 @@ def test_detects_schwab_statement():
 def test_unknown_document_returns_unknown():
     with patch("pdfplumber.open", return_value=_mock_pdf("random unrelated text")):
         assert detect_document_type("dummy.pdf") == "unknown"
+
+
+def test_empty_pdf_returns_unknown():
+    pdf = MagicMock()
+    pdf.__enter__ = MagicMock(return_value=pdf)
+    pdf.__exit__ = MagicMock(return_value=False)
+    pdf.pages = []  # empty pages
+    with patch("pdfplumber.open", return_value=pdf):
+        assert detect_document_type("dummy.pdf") == "unknown"

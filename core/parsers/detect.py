@@ -19,7 +19,7 @@ _SIGNATURES = [
 
 def detect_document_type(pdf_path: str) -> str:
     with pdfplumber.open(pdf_path) as pdf:
-        first_page_text = pdf.pages[0].extract_text() or ""
+        first_page_text = pdf.pages[0].extract_text() if pdf.pages else ""
     for doc_type, phrases in _SIGNATURES:
         if all(phrase in first_page_text for phrase in phrases):
             return doc_type
