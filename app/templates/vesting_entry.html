@@ -6,7 +6,9 @@
     <h3>Auto-fill from Release Confirmation PDF</h3>
     <form method="post" enctype="multipart/form-data" action="{{ url_for('vesting_upload', ay_label=ay_label) }}">
       <input type="file" name="pdf" accept=".pdf" required>
-      <button type="submit">Parse Release Confirmation</button>
+            <label style="margin-top:0.5rem;">PDF Password (if protected):</label>
+      <input type="password" name="pdf_password" placeholder="Leave blank if none" style="max-width:220px;">
+<button type="submit">Parse Release Confirmation</button>
     </form>
   </div>
 
@@ -14,7 +16,9 @@
     <h3>Bulk import from Transaction History PDF</h3>
     <form method="post" enctype="multipart/form-data" action="{{ url_for('vesting_upload_bulk', ay_label=ay_label) }}">
       <input type="file" name="pdf" accept=".pdf" required>
-      <button type="submit">Parse Transaction History</button>
+            <label style="margin-top:0.5rem;">PDF Password (if protected):</label>
+      <input type="password" name="pdf_password" placeholder="Leave blank if none" style="max-width:220px;">
+<button type="submit">Parse Transaction History</button>
     </form>
   </div>
 

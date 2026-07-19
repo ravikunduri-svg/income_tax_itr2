@@ -4,16 +4,16 @@ from datetime import datetime
 import pdfplumber
 
 
-def parse(pdf_path: str) -> dict:
-    text = _extract_text(pdf_path)
+def parse(pdf_path: str, password: str = "") -> dict:
+    text = _extract_text(pdf_path, password)
     return {
         "vesting_events": _parse_vesting_events(text),
         "sale_events": _parse_sale_events(text),
     }
 
 
-def _extract_text(pdf_path: str) -> str:
-    with pdfplumber.open(pdf_path) as pdf:
+def _extract_text(pdf_path: str, password: str = "") -> str:
+    with pdfplumber.open(pdf_path, password=password or None) as pdf:
         return "\n".join(page.extract_text() or "" for page in pdf.pages)
 
 

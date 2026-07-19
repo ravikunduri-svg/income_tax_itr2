@@ -83,19 +83,20 @@ def form16_upload(ay_label: str):
         flash("No file uploaded.")
         return redirect(url_for("form16_entry", ay_label=ay_label))
     tmp_path = _save_upload_to_temp(f)
+    pwd = request.form.get("pdf_password", "")
     try:
         from core.parsers.detect import detect_document_type
-        doc_type = detect_document_type(tmp_path)
+        doc_type = detect_document_type(tmp_path, pwd)
         if doc_type == "form16":
             from core.parsers.form16 import parse
-            result = parse(tmp_path)
+            result = parse(tmp_path, pwd)
             session["form16_prefill"] = {
                 k: {"value": v.value, "confidence": v.confidence, "hint": v.source_hint}
                 for k, v in result.items()
             }
         elif doc_type == "ais":
             from core.parsers.ais import parse
-            result = parse(tmp_path)
+            result = parse(tmp_path, pwd)
             session["ais_prefill"] = {
                 k: {"value": v.value, "confidence": v.confidence, "hint": v.source_hint}
                 for k, v in result.items()
@@ -156,9 +157,10 @@ def vesting_upload(ay_label: str):
         flash("No file uploaded.")
         return redirect(url_for("vesting_entry", ay_label=ay_label))
     tmp_path = _save_upload_to_temp(f)
+    pwd = request.form.get("pdf_password", "")
     try:
         from core.parsers.detect import detect_document_type
-        doc_type = detect_document_type(tmp_path)
+        doc_type = detect_document_type(tmp_path, pwd)
         if doc_type == "fidelity_release":
             from core.parsers.fidelity_release import parse
         elif doc_type == "schwab_release":
@@ -166,7 +168,7 @@ def vesting_upload(ay_label: str):
         else:
             flash(f"Expected a Fidelity or Schwab RSU Release Confirmation PDF, got '{doc_type}'.")
             return redirect(url_for("vesting_entry", ay_label=ay_label))
-        result = parse(tmp_path)
+        result = parse(tmp_path, pwd)
         session["vesting_prefill"] = {
             k: {"value": v.value, "confidence": v.confidence, "hint": v.source_hint}
             for k, v in result.items()
@@ -184,9 +186,10 @@ def vesting_upload_bulk(ay_label: str):
         flash("No file uploaded.")
         return redirect(url_for("vesting_entry", ay_label=ay_label))
     tmp_path = _save_upload_to_temp(f)
+    pwd = request.form.get("pdf_password", "")
     try:
         from core.parsers.detect import detect_document_type
-        doc_type = detect_document_type(tmp_path)
+        doc_type = detect_document_type(tmp_path, pwd)
         if doc_type == "fidelity_statement":
             from core.parsers.fidelity_statement import parse
         elif doc_type == "schwab_statement":
@@ -194,7 +197,7 @@ def vesting_upload_bulk(ay_label: str):
         else:
             flash(f"Expected a Fidelity or Schwab transaction history PDF, got '{doc_type}'.")
             return redirect(url_for("vesting_entry", ay_label=ay_label))
-        result = parse(tmp_path)
+        result = parse(tmp_path, pwd)
         session["vesting_bulk_prefill"] = result["vesting_events"]
     finally:
         os.unlink(tmp_path)
@@ -255,9 +258,10 @@ def sales_upload_bulk(ay_label: str):
         flash("No file uploaded.")
         return redirect(url_for("sale_entry", ay_label=ay_label))
     tmp_path = _save_upload_to_temp(f)
+    pwd = request.form.get("pdf_password", "")
     try:
         from core.parsers.detect import detect_document_type
-        doc_type = detect_document_type(tmp_path)
+        doc_type = detect_document_type(tmp_path, pwd)
         if doc_type == "fidelity_statement":
             from core.parsers.fidelity_statement import parse
         elif doc_type == "schwab_statement":
@@ -265,7 +269,7 @@ def sales_upload_bulk(ay_label: str):
         else:
             flash(f"Expected a Fidelity or Schwab transaction history PDF, got '{doc_type}'.")
             return redirect(url_for("sale_entry", ay_label=ay_label))
-        result = parse(tmp_path)
+        result = parse(tmp_path, pwd)
         session["sales_bulk_prefill"] = result["sale_events"]
     finally:
         os.unlink(tmp_path)
@@ -301,9 +305,10 @@ def dividends_upload(ay_label: str):
         flash("No file uploaded.")
         return redirect(url_for("dividend_entry", ay_label=ay_label))
     tmp_path = _save_upload_to_temp(f)
+    pwd = request.form.get("pdf_password", "")
     try:
         from core.parsers.detect import detect_document_type
-        doc_type = detect_document_type(tmp_path)
+        doc_type = detect_document_type(tmp_path, pwd)
         if doc_type == "fidelity_tax":
             from core.parsers.fidelity_tax import parse
         elif doc_type == "schwab_tax":
@@ -311,7 +316,7 @@ def dividends_upload(ay_label: str):
         else:
             flash(f"Expected a 1042-S or 1099-DIV PDF, got '{doc_type}'.")
             return redirect(url_for("dividend_entry", ay_label=ay_label))
-        result = parse(tmp_path)
+        result = parse(tmp_path, pwd)
         session["dividends_prefill"] = {
             k: {"value": v.value, "confidence": v.confidence, "hint": v.source_hint}
             for k, v in result.items()

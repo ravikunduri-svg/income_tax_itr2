@@ -5,16 +5,16 @@ import pdfplumber
 from core.parsers._base import ParsedField, ParseResult, high, missing
 
 
-def parse(pdf_path: str) -> ParseResult:
-    text = _extract_text(pdf_path)
+def parse(pdf_path: str, password: str = "") -> ParseResult:
+    text = _extract_text(pdf_path, password)
     return {
         "gross_dividend_usd": _parse_dividend(text),
         "us_tax_withheld_usd": _parse_tax_withheld(text),
     }
 
 
-def _extract_text(pdf_path: str) -> str:
-    with pdfplumber.open(pdf_path) as pdf:
+def _extract_text(pdf_path: str, password: str = "") -> str:
+    with pdfplumber.open(pdf_path, password=password or None) as pdf:
         return "\n".join(page.extract_text() or "" for page in pdf.pages)
 
 

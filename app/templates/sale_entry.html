@@ -7,7 +7,9 @@
     <p class="field-help">Sale events are imported without lot allocations — assign lots manually after import.</p>
     <form method="post" enctype="multipart/form-data" action="{{ url_for('sales_upload_bulk', ay_label=ay_label) }}">
       <input type="file" name="pdf" accept=".pdf" required>
-      <button type="submit">Parse Transaction History</button>
+            <label style="margin-top:0.5rem;">PDF Password (if protected):</label>
+      <input type="password" name="pdf_password" placeholder="Leave blank if none" style="max-width:220px;">
+<button type="submit">Parse Transaction History</button>
     </form>
   </div>
 
