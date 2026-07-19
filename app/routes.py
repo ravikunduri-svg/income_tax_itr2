@@ -10,6 +10,7 @@ from core.report import build_report
 from db.access import Database
 
 app = Flask(__name__)
+app.secret_key = "itr2-rsu-dev-secret"
 _db_path_holder = {"path": None}
 
 
